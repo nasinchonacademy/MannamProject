@@ -90,4 +90,53 @@ public class ChatRoomService {
         return chatRoomRepository.findById(roomId)
                 .orElseThrow(() -> new RuntimeException("ChatRoom not found with id: " + roomId));
     }
+
+    public ChatRoomDTO matchAndCreateRoom(String userUid) {
+        // uid로 현재 사용자 조회
+        User currentUser = userRepository.findByUid(userUid)
+                .orElseThrow(() -> new RuntimeException("User not found with uid: " + userUid));
+
+        // 현재 사용자의 관심사 목록을 가져옴
+        List<String> userInterests = currentUser.getInterests().stream()
+                .map(interest -> interest.getInterestName())
+                .collect(Collectors.toList());
+
+        // 관심사 목록 중 하나라도 일치하는 사용자 목록 조회 (성별이 다른 사용자)
+        List<User> potentialMatches = userRepository.findUsersByInterestsAndDifferentGender(
+                userInterests, currentUser.getId(), currentUser.getGender());
+
+        // 매칭될 사용자가 없을 경우 예외 처리
+        if (potentialMatches.isEmpty()) {
+            throw new RuntimeException("No matching users found");
+        }
+
+        // 랜덤하게 한 명의 사용자를 선택
+        User matchedUser = potentialMatches.get(random.nextInt(potentialMatches.size()));
+
+        // 기존 채팅방 확인
+        Optional<ChatRoom> existingRoom = chatRoomRepository.findByUser1AndUser2(currentUser, matchedUser);
+        if (existingRoom.isEmpty()) {
+            existingRoom = chatRoomRepository.findByUser2AndUser1(currentUser, matchedUser);
+        }
+
+        // 기존 채팅방이 있으면 해당 방을 반환, 없으면 새로 생성
+        if (existingRoom.isPresent()) {
+            return entityToDto(existingRoom.get(), matchedUser);
+        }
+
+        // 새로운 채팅방 생성
+        ChatRoom chatRoom = new ChatRoom();
+        chatRoom.setUser1(currentUser);
+        chatRoom.setUser2(matchedUser);
+        chatRoom.setRoomname("Room-" + currentUser.getName() + "-and-" + matchedUser.getName());
+
+        ChatRoom savedRoom = chatRoomRepository.save(chatRoom);
+        return entityToDto(savedRoom, matchedUser);
+    }
+
+    public ChatRoomDTO matchAndCreateNewRoom(String userUid) {
+        // uid로 새로운 상대를 찾는 로직 (기존 로직과 유사)
+        return matchAndCreateRoom(userUid);
+    }
+
 }

@@ -1,15 +1,19 @@
 package org.zerock.wantuproject.controller;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.ModelAndView;
 import org.zerock.wantuproject.dto.ChatRoomDTO;
 import org.zerock.wantuproject.entity.User;
+import org.zerock.wantuproject.service.ChatMessageService;
 import org.zerock.wantuproject.service.ChatRoomService;
 import org.zerock.wantuproject.service.UserService;
 
@@ -20,6 +24,7 @@ public class ChatRoomController {
 
     private final ChatRoomService chatRoomService;
     private final UserService userService;
+    private final ChatMessageService chatMessageService;
 
     @PostMapping("/match")
     public ModelAndView matchAndRedirect(String interestName, Model model) {
@@ -65,5 +70,23 @@ public class ChatRoomController {
         }
 
         return modelAndView;
+    }
+
+    // uid로 다른 상대 찾기
+    @PostMapping("/findAnotherUser/{userUid}")
+    public ResponseEntity<ChatRoomDTO> findAnotherUser(@PathVariable String userUid) {
+        try {
+            // 새로운 상대를 찾고 새로운 채팅방을 생성
+            ChatRoomDTO newRoomDTO = chatRoomService.matchAndCreateNewRoom(userUid);
+
+            // 기존 채팅방의 메시지 삭제
+            chatMessageService.deleteMessagesByRoomId(newRoomDTO.getRoomid());
+
+            // 새로운 채팅방 정보 반환
+            return ResponseEntity.ok(newRoomDTO);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(null);  // 에러 발생 시 응답 처리
+        }
     }
 }

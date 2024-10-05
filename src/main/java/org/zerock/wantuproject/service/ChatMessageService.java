@@ -57,6 +57,10 @@ public class ChatMessageService {
                 .collect(Collectors.toList());
     }
 
+    public void deleteMessagesByRoomId(Long roomId) {
+        chatMessageRepository.deleteByChatRoomRoomid(roomId);
+    }
+
     // DTO -> 엔티티 변환
     private ChatMessage dtoToEntity(ChatMessageDTO dto, ChatRoom chatRoom, User sender) {
         return ChatMessage.builder()

@@ -22,6 +22,27 @@ function connect() {
     });
 }
 
+// 새로운 상대를 찾고, 기존 채팅방 메시지를 삭제한 후 새로운 채팅방으로 리다이렉트하는 함수
+function findAnotherUser() {
+    const loggedInUserId = document.getElementById('chatRoom').getAttribute('data-user-id'); // 현재 로그인된 사용자 ID
+
+    // 서버로 새로운 상대 찾기 요청
+    fetch(`/chat/findAnotherUser/${loggedInUserId}`, {
+        method: 'POST'
+    })
+        .then(response => response.json())
+        .then(data => {
+            if (data && data.roomId) {
+                // 새로운 채팅방으로 리다이렉트
+                window.location.href = `/chat/room/${data.roomId}`;
+            } else {
+                console.error("새로운 상대를 찾을 수 없습니다.");
+            }
+        })
+        .catch(error => console.error('Error finding another user:', error));
+}
+
+
 function sendMessage() {
     const messageInput = document.getElementById('messageInput');
     const messageText = messageInput.value.trim();
