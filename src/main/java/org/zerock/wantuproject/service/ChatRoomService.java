@@ -24,16 +24,15 @@ public class ChatRoomService {
     private final UserService userService;
 
     public ChatRoomDTO matchAndCreateRoom(Long userId) {
-        // userId로 현재 사용자 조회
         User currentUser = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("User not found with userId: " + userId));
 
-        // 현재 사용자의 관심사 목록을 가져옴
+        // 현재 사용자의 관심사 목록
         List<String> userInterests = currentUser.getInterests().stream()
                 .map(interest -> interest.getInterestName())
                 .collect(Collectors.toList());
 
-        // 관심사 목록 중 하나라도 일치하는 사용자 목록 조회 (성별이 다른 사용자)
+        // 관심사 목록 중 하나라도 일치하는 사용자 목록 조회 (이미 매칭된 사용자 제외)
         List<User> potentialMatches = userRepository.findUsersByInterestsAndDifferentGender(
                 userInterests, currentUser.getId(), currentUser.getGender());
 
@@ -43,18 +42,7 @@ public class ChatRoomService {
         }
 
         // 랜덤하게 한 명의 사용자를 선택
-        User matchedUser = potentialMatches.get(random.nextInt(potentialMatches.size()));
-
-        // 기존 채팅방 확인
-        Optional<ChatRoom> existingRoom = chatRoomRepository.findByUser1AndUser2(currentUser, matchedUser);
-        if (existingRoom.isEmpty()) {
-            existingRoom = chatRoomRepository.findByUser2AndUser1(currentUser, matchedUser);
-        }
-
-        // 기존 채팅방이 있으면 해당 방을 반환, 없으면 새로 생성
-        if (existingRoom.isPresent()) {
-            return entityToDto(existingRoom.get(), matchedUser);
-        }
+        User matchedUser = potentialMatches.get(new Random().nextInt(potentialMatches.size()));
 
         // 새로운 채팅방 생성
         ChatRoom chatRoom = new ChatRoom();

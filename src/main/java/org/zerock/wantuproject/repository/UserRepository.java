@@ -26,6 +26,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "WHERE i.interestName IN :interestNames " +
             "AND u.id != :userId " +
             "AND u.gender != :gender " +
+            "AND u.id NOT IN (SELECT cr.user2.id FROM ChatRoom cr WHERE cr.user1.id = :userId " +
+            "UNION SELECT cr.user1.id FROM ChatRoom cr WHERE cr.user2.id = :userId) " + // 이미 매칭된 사용자 제외
             "GROUP BY u " +
             "ORDER BY COUNT(i) DESC")
     List<User> findUsersByInterestsAndDifferentGender(List<String> interestNames, Long userId, String gender);

@@ -1,12 +1,16 @@
 let roomId = document.getElementById('chatRoom').getAttribute('data-room-id');
 let otherUserId = document.getElementById('chatRoom').getAttribute('data-other-user-id');
 loggedInUserId = document.getElementById('chatRoom').getAttribute('data-user-id');
-
+let stompClient = null;
 let lastSenderId = null;
 
 console.log("Room ID:", roomId, "Other User ID:", otherUserId, "Logged in User ID:", loggedInUserId);
 
 function connect() {
+    if (stompClient !== null) {
+        stompClient.disconnect(); // 기존 WebSocket 연결을 끊음
+    }
+
     console.log("roomId로 WebSocket 연결 시도:", roomId);
     const socket = new SockJS('/ws');
     stompClient = Stomp.over(socket);
@@ -14,6 +18,7 @@ function connect() {
     stompClient.connect({}, function (frame) {
         console.log('WebSocket 서버에 연결되었습니다, frame:', frame);
 
+        // 새로운 채팅방에 대한 구독 설정
         stompClient.subscribe(`/topic/chat/${roomId}`, function (messageOutput) {
             console.log("받은 메시지:", messageOutput.body);
             const message = JSON.parse(messageOutput.body);
@@ -22,26 +27,80 @@ function connect() {
     });
 }
 
-// 새로운 상대를 찾고, 기존 채팅방 메시지를 삭제한 후 새로운 채팅방으로 리다이렉트하는 함수
 function findAnotherUser() {
-    const loggedInUserId = document.getElementById('chatRoom').getAttribute('data-user-id'); // 현재 로그인된 사용자 ID
-
     // 서버로 새로운 상대 찾기 요청
     fetch(`/chat/findAnotherUser/${loggedInUserId}`, {
         method: 'POST'
     })
-        .then(response => response.json())
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('새로운 상대를 찾을 수 없습니다. 다시 시도해 주세요.');
+            }
+            return response.json();
+        })
         .then(data => {
-            if (data && data.roomId) {
-                // 새로운 채팅방으로 리다이렉트
-                window.location.href = `/chat/room/${data.roomId}`;
+            if (data && data.roomid) {
+                // 새로운 채팅방 정보로 UI 및 WebSocket, 채팅 기록 업데이트
+                updateChatRoom(data.roomid, data.otherUser, data.profileImageUrls);
             } else {
                 console.error("새로운 상대를 찾을 수 없습니다.");
             }
         })
-        .catch(error => console.error('Error finding another user:', error));
+        .catch(error => {
+            alert(error.message);  // 사용자에게 오류 메시지 표시
+            console.error('Error finding another user:', error);
+        });
 }
 
+function updateChatRoom(newRoomId, otherUser, profileImageUrls) {
+    // 채팅방 ID 업데이트
+    roomId = newRoomId; // 전역 변수 roomId 업데이트
+    document.getElementById('chatRoom').setAttribute('data-room-id', roomId);
+
+    // WebSocket 재연결
+    connect();  // 새로운 roomId에 맞게 WebSocket 연결 재설정
+
+    // 새로운 채팅방의 채팅 기록 불러오기
+    loadChatHistory();
+
+    // 상대방 프로필 업데이트
+    updateChatRoomInfo(otherUser, roomId, profileImageUrls);
+}
+
+
+function updateChatRoomInfo(otherUser, roomId, profileImageUrls) {
+    // 채팅방 ID 업데이트
+    document.getElementById('chatRoom').setAttribute('data-room-id', roomId);
+
+    // 상대방 이름 업데이트
+    document.querySelector('.profile-info h3').textContent = otherUser.name;
+
+    // 생일 및 주소 업데이트
+    document.getElementById('user-info').setAttribute('data-birth-date', otherUser.birthDate);
+    const birthDate = new Date(otherUser.birthDate);
+    const today = new Date();
+    let age = today.getFullYear() - birthDate.getFullYear();
+    if (today.getMonth() < birthDate.getMonth() || (today.getMonth() === birthDate.getMonth() && today.getDate() < birthDate.getDate())) {
+        age--;
+    }
+    document.getElementById('user-info').textContent = `${otherUser.address.split(' ')[0]} | ${age}세`;
+
+    // 프로필 이미지 슬라이드 업데이트
+    const profileImagesContainer = document.querySelector('.profile-images');
+    profileImagesContainer.innerHTML = ''; // 기존 이미지 제거
+    profileImageUrls.forEach((imageUrl, index) => {
+        const imgElement = document.createElement('img');
+        imgElement.src = `/files?fileName=${imageUrl}`;
+        imgElement.alt = "상대방 프로필 사진";
+        imgElement.classList.add('profile-pic');
+        if (index === 0) imgElement.classList.add('active'); // 첫 번째 이미지는 활성화
+        profileImagesContainer.appendChild(imgElement);
+    });
+
+    // 슬라이드 초기화
+    currentIndex = 0;
+    updateSlide();
+}
 
 function sendMessage() {
     const messageInput = document.getElementById('messageInput');
@@ -94,10 +153,12 @@ function showMessage(message) {
 
 
 function loadChatHistory() {
-    fetch(`/chat/messages/${roomId}`)  // 메시지 조회 API 호출
+    fetch(`/chat/messages/${roomId}`)  // 새로운 채팅방 ID로 메시지 조회 API 호출
         .then(response => response.json())
         .then(messages => {
             lastSenderId = null; // 채팅 기록 로드 전 발신자 초기화
+            const chatMessages = document.getElementById('chatRoom');
+            chatMessages.innerHTML = ''; // 기존 채팅 기록 삭제
             messages.forEach(showMessage);  // 불러온 메시지를 화면에 표시
         })
         .catch(error => console.error('Error loading chat history:', error));
@@ -112,8 +173,9 @@ document.addEventListener('DOMContentLoaded', function() {
 let currentIndex = 0;
 const profilePics = document.querySelectorAll('.profile-pic');
 
-// 이미지 슬라이드 업데이트 함수
+/// 이미지 슬라이드 업데이트 함수
 function updateSlide() {
+    const profilePics = document.querySelectorAll('.profile-pic');
     profilePics.forEach((pic, index) => {
         pic.classList.toggle('active', index === currentIndex);
     });
