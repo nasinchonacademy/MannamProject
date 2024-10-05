@@ -1,0 +1,258 @@
+/* 기본 설정 */
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+/* loginContent 전체를 Flexbox로 설정 */
+.loginContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    width: 100%;
+}
+
+/* 배경 이미지 설정 */
+.background-image {
+    background-image: url('/image/loginbackground.png'); /* 실제 이미지 경로로 변경 */
+    background-size: cover;
+    background-position: center;
+    width: 100%;
+    height: 100vh;
+    display: flex;
+    justify-content: flex-end; /* 버튼을 아래로 밀어냄 */
+    align-items: center;
+    padding-bottom: 100px;
+    position: relative;
+    z-index: 1;
+    flex-direction: column;
+}
+
+/* 로그인 버튼 스타일 */
+.login-button {
+    background-color: #f08080;
+    color: white;
+    border: none;
+    padding: 15px 40px;
+    border-radius: 30px;
+    cursor: pointer;
+    font-size: 18px;
+    z-index: 2;
+}
+
+/* 로그인 폼 스타일 */
+.hidden {
+    display: none;
+}
+
+.login-form {
+    width: 550px;
+    padding: 30px;
+    background-color: white;
+    /* border: 1px solid #ddd; */
+    border-radius: 10px;
+    /* box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1); */
+    text-align: center;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 100;
+    display: none;
+    height: 500px;
+}
+
+.login-form h2{
+    margin-bottom: 50px;
+    font-weight: bold;
+    margin-top: 40px;
+}
+
+.form-group{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 450px;
+    margin: 0 auto;
+    margin-bottom: 40px;
+    justify-content: space-between;
+}
+
+.form-group input{
+    width: 365px;
+    border: 1px solid black;
+    border-radius: 20px;
+
+}
+
+.form-group label{
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.form-group-find{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -15px;
+    margin-bottom: 20px;
+}
+
+.find-id-password{
+    margin-right: 20px;
+}
+
+.form_button{
+    display: flex;
+    flex-direction: column;
+}
+
+.form-login-button{
+    width: 300px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 15px;
+    padding: 6px;
+    font-size: 18px;
+    /* font-weight: bold; */
+    border: 1px solid black;
+}
+
+.form-register-button{
+    width: 300px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    background-color: white;
+    border-radius: 15px;
+    padding: 6px;
+    font-size: 18px;
+    /* font-weight: bold; */
+    border: 1px solid black;
+    color: black;
+    text-decoration: none;
+
+}
+.form-register-button:hover{
+    color: black;
+}
+
+.show {
+    display: block;
+    opacity: 0;
+    animation: fadeIn 1s forwards;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, -60%);
+    }
+    100% {
+        opacity: 1;
+        transform: translate(-50%, -50%);
+    }
+}
+
+/* 팝업 배경 */
+.popup-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.6); /* 어두운 배경 */
+    z-index: 1000;
+    display: flex;
+    justify-content: center; /* 가로 중앙 정렬 */
+    align-items: center; /* 세로 중앙 정렬 */
+}
+
+/* 팝업 폼 */
+.popup-form {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -40%); /* 가로 세로 중앙 정렬, 살짝 아래로 이동 */
+    background-color: #f9f9f9;
+    padding: 30px;
+    border-radius: 15px;
+    width: 550px;
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.3);
+    z-index: 1001;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+    max-height: 100vh; /* 팝업 창의 최대 높이를 화면의 80%로 설정 */
+    overflow-y: auto; /* 높이가 넘치면 스크롤 추가 */
+}
+
+/* 팝업 헤더 */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.popup-header h2 {
+    font-size: 1.5em;
+    font-weight: bold;
+    color: #333; /* 헤더 텍스트 색상 */
+}
+
+.close-popup {
+    background: none;
+    border: none;
+    font-size: 1.5em;
+    color: #999; /* 닫기 버튼 색상 */
+    cursor: pointer;
+}
+
+.close-popup:hover {
+    color: #333; /* 닫기 버튼 호버 효과 */
+}
+
+/* 버튼 스타일 */
+.send-code-button,
+.verify-code-button,
+.reset-password-button,
+.send-find-username-button
+{
+    width: 100%;
+    padding: 10px;
+    font-size: 1.1em;
+    color: #000000;
+    background-color: #ffffff; /* 메인 버튼 색상 */
+    border: 1px solid black;
+    border-radius: 15px;
+    cursor: pointer;
+    margin-bottom: 25px;
+}
+
+.send-code-button:hover,
+.verify-code-button:hover,
+.reset-password-button:hover,
+.send-find-username-button:hover{
+    background-color: #2aaff8;
+}
+
+/* 숨김 클래스 */
+.hidden {
+    display: none;
+}
+
+.find-password-button{
+    text-align: center;
+    width: 200px;
+    background-color: white;
+    border: 1px solid black;
+    border-radius: 15px;
+    cursor: pointer;
+    padding: 10px;
+    font-size: 1.1em;
+    color: black;
+    text-decoration: none;
+}

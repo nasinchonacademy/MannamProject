@@ -1,0 +1,56 @@
+<div class="container">
+  <!-- 관심사 태그 -->
+  <div class="interests" th:if="${user != null and user.interests != null}">
+    <div th:each="interest : ${user.interests}" class="interest-tags">
+      <button class="interest-tag" th:text="'#' + ${interest.interestName}"></button>
+    </div>
+  </div>
+
+
+  <div class="chat-box">
+    <div id="chatRoom" th:attr="data-room-id=${roomId}, data-other-user-id=${otherUserId}, data-user-id=${username}">
+
+    </div>
+
+
+    <div class="chat-input">
+      <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
+      <button id="sendBtn" onclick="sendMessage()">전송</button>
+    </div>
+  </div>
+
+  <!-- 프로필 카드 -->
+  <div th:if="${otherUser != null}" class="profile-card">
+    <!-- 슬라이드 가능한 프로필 이미지 영역 -->
+    <div class="profile-slider">
+      <button class="slide-btn prev-btn" onclick="prevImage()">&#10094;</button> <!-- 이전 화살표 -->
+
+      <!-- 프로필 이미지 슬라이드 -->
+      <div class="profile-images">
+        <img th:each="profileImageUrl, iterStat : ${profileImageUrls}"
+             th:src="@{|/files?fileName=${profileImageUrl}|}"
+             alt="상대방 프로필 사진"
+             class="profile-pic" th:classappend="${iterStat.index == 0} ? 'active' : ''">
+      </div>
+
+      <button class="slide-btn next-btn" onclick="nextImage()">&#10095;</button> <!-- 다음 화살표 -->
+    </div>
+
+    <!-- 프로필 정보 -->
+    <div class="profile-info">
+      <h3 th:text="${otherUser.name}">상대방 이름</h3>
+      <!-- 주소에서 도시명만 추출하여 표시 -->
+      <p id="user-info" th:attr="data-birth-date=${otherUser.birthDate}" th:text="${#strings.arraySplit(otherUser.address, ' ')[0]} + ' | 나이 계산 중...'">상대방 주소 및 정보</p>
+      <!-- introduce 내용을 표시 -->
+      <p th:text="${otherUser.introduce != null ? otherUser.introduce : '소개 정보가 없습니다.'}">소개</p>
+    </div>
+  </div>
+</div>
+
+
+  <!-- 하단 액션 버튼 -->
+  <div class="actions">
+    <button class="find-another">다른 상대 찾기</button>
+    <button class="like-and-save">좋아요 누르고 채팅방 저장하기</button>
+  </div>
+</div>

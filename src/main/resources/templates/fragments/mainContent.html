@@ -1,0 +1,38 @@
+
+
+
+  <!-- 첫 번째 섹션 -->
+  <div class="section section1">
+    <div class="overlay"></div>
+    <div class="content">
+      <h1>나와 비슷한 사람 어디서 찾을까?</h1>
+      <div class="link-button">
+        <div class="button-group">
+          <p><span>나에게 딱 맞는</span> 이성을 찾고 싶다.</p><form action="/chat/match" method="POST">
+          <input type="hidden" name="userId" th:value="${user.uid}"> <!-- 현재 사용자 UID -->
+          <button type="submit">맞춤형 상대 찾기</button>
+        </form>
+        </div>
+        <div class="button-group2">
+          <p>내가 원하는 <span>이성을 찾고 싶다.</span></p>
+          <button>프로필로 상대 찾기</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 두 번째 섹션 -->
+  <div class="section section2">
+    <div class="overlay"></div>
+    <div class="content2">
+      <h1><span>우리</span><br>오늘은 뭐하면서 놀까?</h1>
+      <div class="button-group">
+        <p>오늘은 어떤 사람들을 만날볼까?</p>
+        <button>모임 찾아보기</button>
+      </div>
+      <div class="button-group2">
+        <p><span>오늘은 어떤 걸 같이 해볼까?</span></p>
+        <button>직접 모임 만들기</button>
+      </div>
+    </div>
+  </div>

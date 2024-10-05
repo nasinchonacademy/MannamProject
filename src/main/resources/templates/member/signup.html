@@ -1,0 +1,746 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>계정 만들기</title>
+  <script src="https://developers.kakao.com/sdk/js/kakao.js"></script> <!-- 카카오 API 스크립트 -->
+  <script>
+    // 카카오 API 초기화 (JavaScript 키를 넣어주세요)
+    Kakao.init('15332720275d2182ccb43e05ac1ce663');
+  </script>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      margin: 0;
+    }
+    h1 {
+      margin-bottom: 100px;
+      text-align: center;
+    }
+    form {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .form-group {
+      display: flex;
+      align-items: center;
+      margin-bottom: 60px;
+    }
+    label {
+      width: 100px;
+      font-size: 20px;
+      font-weight: bold;
+    }
+    input[type="text"],input[type="email"] ,input[type="date"], input[type="password"] {
+      padding: 10px;
+      width: 500px;
+      border: 1px solid black;
+      border-radius: 15px;
+    }
+
+    #uid{
+      width: 355px;
+    }
+
+    input[type="email"]{
+      width: 355px
+    }
+
+    .gender-buttons, .interest-section {
+      display: flex;
+      gap: 20px;
+      margin: 15px 0;
+      justify-content: center;
+    }
+    .gender-buttons label, .interest-section button {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 150px;
+      height: 45px;
+      border: 2px solid #000000;
+      border-radius: 15px;
+      cursor: pointer;
+      text-align: center;
+      font-size: 20px;
+      background-color: white;
+    }
+    .gender-buttons input[type="radio"] {
+      display: none; /* 라디오 버튼 숨기기 */
+    }
+    .gender-buttons input[type="radio"]:checked + label {
+      background-color: #ff6b6b;
+      color: white;
+      border-color: #ff6b6b;
+    }
+    .profile-photo-section {
+      display: flex;
+      justify-content: center;
+      gap: 20px; /* 사진 상자 사이 간격 추가 */
+      flex-wrap: wrap; /* 사진이 많아질 경우 다음 줄로 넘어가게 설정 */
+    }
+
+    .photo-box {
+      width: 150px;  /* 사진 상자 너비 확대 */
+      height: 200px; /* 사진 상자 높이 확대 */
+      border: 2px dashed #ccc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      overflow: hidden;
+      margin-bottom: 20px; /* 사진 상자 아래 간격 추가 */
+    }
+
+    .photo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .add-photo-button {
+      position: absolute;
+      bottom: 10px;
+      right: 10px;
+      background-color: #ff6b6b;
+      border: none;
+      border-radius: 50%;
+      width: 30px;  /* 추가 버튼 크기 확대 */
+      height: 30px; /* 추가 버튼 크기 확대 */
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: white;
+      font-size: 18px;
+      line-height: 0;
+    }
+
+    .submit-btn {
+      margin-top: 150px;
+      padding: 15px 30px;
+      border: 1px solid black;
+      background-color: white;
+      border-radius: 15px;
+      cursor: pointer;
+      font-size: 20px;
+      text-align: center;
+      width: 300px;
+      height: auto;
+      color: black;
+    }
+    footer {
+      margin-top: 80px;
+      font-size: 12px;
+      text-align: center;
+    }
+    footer a {
+      text-decoration: none;
+      color: #333;
+      margin: 0 10px;
+    }
+    .hidden-input {
+      display: none;
+    }
+
+    #address {
+      width: 355px;
+      padding: 10px;
+      border: 1px solid black;
+      border-radius: 15px;
+    }
+
+    .address-button {
+      margin-left: 10px;
+      padding: 8px;
+      background-color: #fbfbfb;
+      color: #000000;
+      border: 1px solid black;
+      border-radius: 15px;
+      cursor: pointer;
+      width: 135px;
+      }
+
+      /* 선택된 관심사 섹션 스타일 */
+    .selected-interests {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 20px;
+    }
+
+    .selected-interest-button {
+      padding: 10px 15px;
+      background-color: #e0f7fa;
+      border: 1px solid #00acc1;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .selected-interest-button:hover {
+      background-color: #b2ebf2;
+    }
+
+    /* 모달 스타일 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+      color: #333;
+    }
+
+    .modal-body {
+      max-height: 300px;
+      overflow-y: auto;
+    }
+
+    .modal-footer {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .modal-save-button {
+      padding: 10px 20px;
+      background-color: #2aaff8;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .interest-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .interest-button {
+      padding: 15px 30px; /* 버튼 크기를 키움 */
+      background-color: #f7f7f7;
+      border: 1px solid #ddd;
+      border-radius: 10px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      font-size: 16px; /* 글씨 크기를 키움 */
+      font-weight: bold;
+    }
+
+    .interest-button.selected {
+      background-color: #ffffff;
+      border-color: #2aaff8;
+    }
+
+    .interest-button:hover {
+      background-color: #e0e0e0;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+      transform: translateY(-2px);
+    }
+
+    .close {
+      color: #888;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* 입력창 스타일 수정 */
+    .custom-input {
+      padding: 5px;
+      width: 150px; /* 더 작은 크기 */
+      border: 1px solid #ccc;
+      border-radius: 10px;
+      font-size: 12px; /* 더 작은 글씨 */
+    }
+
+    .custom-input:focus {
+      outline: none;
+      border-color: #007bff;
+      box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+    }
+
+    .check-btn {
+      margin-left: 10px;
+      padding: 8px;
+      background-color: #fbfbfb;
+      color: #000000;
+      border: 1px solid black;
+      border-radius: 15px;
+      cursor: pointer;
+      width: 135px;
+      /* height: 37px; */
+    }
+
+    .check-btn:disabled {
+      background-color: #ccc;
+    }
+
+    /* 모달 스타일 */
+    .modal {
+      display: none;
+      position: fixed;
+      z-index: 1;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.6);
+      backdrop-filter: blur(5px);
+    }
+
+    .modal-content {
+      background-color: #fff;
+      margin: 10% auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 500px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    .modal-header {
+      font-size: 24px;
+      font-weight: bold;
+      margin-bottom: 15px;
+      text-align: center;
+      color: #333;
+    }
+
+    .modal-footer {
+      text-align: center;
+      margin-top: 10px;
+    }
+
+    .modal-save-button {
+      padding: 10px 20px;
+      background-color: #2aaff8;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+  </style>
+</head>
+<body>
+<h1>계정 만들기</h1>
+<form action="/user" method="POST" enctype="multipart/form-data" onsubmit="return prepareInterestsForSubmit() && validateForm()">
+
+  <div class="form-group">
+    <label for="uid">아이디</label>
+    <input type="text" id="uid" name="uid" required>
+    <button type="button" class="check-btn" onclick="checkUsername()">중복 확인</button>
+  </div>
+
+  <div class="form-group">
+    <label for="password">비밀번호</label>
+    <input type="password" id="password" name="password" required>
+
+  </div>
+
+  <div class="form-group">
+    <label for="name">이름</label>
+    <input type="text" id="name" name="name" required>
+  </div>
+
+  <div class="form-group">
+    <label for="email">이메일</label>
+    <input type="email" id="email" name="email" required>
+    <button type="button" class="check-btn" onclick="sendVerificationCode()">본인 인증</button>
+  </div>
+
+  <div class="form-group">
+    <label for="birthdate">생년월일</label>
+    <input type="date" id="birthdate" name="birthDate" required>
+  </div>
+
+  <div class="form-group">
+    <label for="introduce">자기소개</label>
+    <input type="text" id="introduce" name="introduce" placeholder="한줄로 자기소개를 해주세요" required>
+  </div>
+
+  <div class="form-group">
+    <label for="address">주소</label>
+    <input type="text" id="address" name="address" required readonly>
+    <button type="button" class="address-button" onclick="execDaumPostcode()">주소 검색</button>
+  </div>
+
+  <div class="form-group" style="width: 635px">
+    <label style="width: 300px; float: left;">성별(성별을 선택해주세요)</label>
+    <div class="gender-buttons form-group">
+      <input type="radio" id="male" name="gender" value="남성" required>
+      <label for="male">남성</label>
+
+      <input type="radio" id="female" name="gender" value="여성" required>
+      <label for="female">여성</label>
+    </div>
+  </div>
+
+  <div style="width: 635px; margin-bottom: 30px">
+    <label>프로필 사진 추가 (최소 3장, 최대 6장)</label>
+  </div>
+  <div id="photo-section" class="profile-photo-section" style="margin-bottom:70px">
+    <div class="photo-box" onclick="document.getElementById('photoInput1').click()">
+      <img id="preview1" src="#" alt="프로필 사진" style="display:none;">
+      <div class="add-photo-button">+</div>
+      <input type="file" id="photoInput1" name="profileImages[]" class="hidden-input" accept="image/*" multiple onchange="previewImage(event, 1)">
+    </div>
+  </div>
+
+  <!-- 관심사 추가 및 재설정 버튼 섹션 -->
+  <div style="width: 635px; margin-bottom: 30px">
+    <label>관심사 추가</label>
+  </div>
+  <div class="interest-section">
+    <div id="interestButtonsContainer">
+      <!-- 관심사 선택 후 버튼들이 동적으로 추가됩니다. -->
+      <button type="button" id="addInterestBtn" onclick="openModal()">+ 관심사 추가</button>
+    </div>
+    <button type="button" id="resetInterestBtn" onclick="resetInterests()">관심사 재설정</button>
+  </div>
+
+  <!-- 선택된 관심사를 숨겨서 서버로 전송할 hidden input -->
+  <input type="hidden" id="interestsInput" name="interests" value="">
+
+  <div id="selectedInterests" class="selected-interests">
+  </div>
+
+  <button type="submit" class="submit-btn">회원가입하기</button>
+</form>
+
+<footer>
+  <a href="#">회사소개</a> | <a href="#">이용약관</a> | <a href="#">개인정보처리방침</a>
+</footer>
+
+<!-- 관심사 모달 -->
+<div id="interestModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <div class="modal-header">관심사 선택 (최대 8개)</div>
+    <div class="modal-body">
+      <div class="interest-list">
+        <button class="interest-button" data-interest="운동" onclick="toggleInterestSelection(this)">운동</button>
+        <button class="interest-button" data-interest="음악" onclick="toggleInterestSelection(this)">음악</button>
+        <button class="interest-button" data-interest="독서" onclick="toggleInterestSelection(this)">독서</button>
+        <button class="interest-button" data-interest="여행" onclick="toggleInterestSelection(this)">여행</button>
+        <button class="interest-button" data-interest="영화" onclick="toggleInterestSelection(this)">영화</button>
+        <button class="interest-button" data-interest="사진" onclick="toggleInterestSelection(this)">사진</button>
+        <button class="interest-button" data-interest="게임" onclick="toggleInterestSelection(this)">게임</button>
+        <button class="interest-button" data-interest="등산" onclick="toggleInterestSelection(this)">등산</button>
+        <button class="interest-button" data-interest="명상" onclick="toggleInterestSelection(this)">명상</button>
+        <button class="interest-button" data-interest="패션" onclick="toggleInterestSelection(this)">패션</button>
+        <button class="interest-button" data-interest="캠핑" onclick="toggleInterestSelection(this)">캠핑</button>
+        <button class="interest-button" data-interest="쇼핑" onclick="toggleInterestSelection(this)">쇼핑</button>
+        <button class="interest-button" data-interest="디자인" onclick="toggleInterestSelection(this)">디자인</button>
+        <button class="interest-button" data-interest="DIY" onclick="toggleInterestSelection(this)">DIY</button>
+        <button class="interest-button" data-interest="과학" onclick="toggleInterestSelection(this)">과학</button>
+        <button class="interest-button" data-interest="기술" onclick="toggleInterestSelection(this)">기술</button>
+        <button class="interest-button" data-interest="요가" onclick="toggleInterestSelection(this)">요가</button>
+        <button class="interest-button" data-interest="춤" onclick="toggleInterestSelection(this)">춤</button>
+        <button class="interest-button" data-interest="자동차" onclick="toggleInterestSelection(this)">자동차</button>
+        <button class="interest-button" data-interest="재테크" onclick="toggleInterestSelection(this)">재테크</button>
+      </div>
+      <input type="text" id="customInterest" placeholder="직접 입력" class="custom-input" />
+      <button class="interest-button" onclick="selectCustomInterest()">직접 입력</button>
+    </div>
+    <div class="modal-footer">
+      <button class="modal-save-button" onclick="saveSelectedInterests()">선택 완료</button>
+    </div>
+  </div>
+</div>
+
+<!-- 인증 코드 입력 모달 -->
+<div id="verificationModal" class="modal">
+  <div class="modal-content">
+    <div class="modal-header">인증 코드 입력</div>
+    <div class="modal-body">
+      <label for="verificationCode">인증 코드</label>
+      <input type="text" id="verificationCode" placeholder="인증 코드를 입력하세요">
+    </div>
+    <div class="modal-footer">
+      <button class="modal-save-button" onclick="verifyCode()">확인</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+  let isUsernameValid = false;  // 전역 변수로 아이디 유효 여부 저장
+  let isEmailVerified = false;  // 이메일 인증 상태
+
+  function checkUsername() {
+    const uid = document.getElementById('uid').value;
+    if (uid === '') {
+      alert('아이디를 입력해주세요.');
+      return;
+    }
+
+    // AJAX 요청으로 서버에 아이디 중복 체크 요청
+    fetch(`/check-username?uid=${uid}`, {
+      method: 'GET',
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.exists) {
+                alert('이미 존재하는 아이디입니다. 다른 아이디를 선택해주세요.');
+                isUsernameValid = false;  // 중복 확인 실패
+              } else {
+                alert('사용 가능한 아이디입니다.');
+                isUsernameValid = true;   // 중복 확인 성공
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('아이디 중복 확인 중 오류가 발생했습니다.');
+              isUsernameValid = false;  // 오류 발생 시 유효하지 않음
+            });
+  }
+
+
+  // 이메일 인증 코드 전송
+  function sendVerificationCode() {
+    const email = document.getElementById('email').value;
+
+    fetch(`/send-verification-code?email=${encodeURIComponent(email)}`, {
+      method: 'GET',
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.success) {
+                alert('인증 코드가 이메일로 전송되었습니다. 이메일을 확인하세요.');
+                document.getElementById('verificationModal').style.display = 'block'; // 모달 표시
+              } else {
+                alert('인증 코드를 전송하는 중 오류가 발생했습니다.');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('오류가 발생했습니다.');
+            });
+  }
+
+  // 인증 코드 확인
+  function verifyCode() {
+    const email = document.getElementById('email').value;
+    const code = document.getElementById('verificationCode').value;
+
+    fetch(`/verify-code?email=${encodeURIComponent(email)}&code=${encodeURIComponent(code)}`, {
+      method: 'GET',
+    })
+            .then(response => response.json())
+            .then(data => {
+              if (data.verified) {
+                alert('이메일 인증이 완료되었습니다.');
+                isEmailVerified = true; // 인증 완료
+                document.getElementById('verificationModal').style.display = 'none'; // 모달 숨김
+              } else {
+                alert('인증 코드가 잘못되었습니다.');
+              }
+            })
+            .catch(error => {
+              console.error('Error:', error);
+              alert('오류가 발생했습니다.');
+            });
+  }
+
+
+  function validateForm() {
+    // 아이디 중복 체크 여부 확인
+    if (!isUsernameValid) {
+      alert('아이디 중복 확인을 통과하지 않았습니다. 중복 확인을 해주세요.');
+      return false;
+    }
+
+    if (!isEmailVerified) {
+      alert('이메일 인증이 완료되어야 회원가입을 진행할 수 있습니다.');
+      return false;
+    }
+
+    // 아이디: 5자 이상, 20자 이하, 영문자와 숫자만 허용
+    const uid = document.getElementById('uid').value;
+    const uidPattern = /^[a-zA-Z0-9]{5,20}$/;
+    if (!uidPattern.test(uid)) {
+      alert('아이디는 5~20자의 영문자와 숫자만 허용됩니다.');
+      return false;
+    }
+
+    // 비밀번호: 8자 이상, 영문자, 숫자, 특수문자 조합
+    // const password = document.getElementById('password').value;
+    // const passwordPattern = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{8,}$/;
+    // if (!passwordPattern.test(password)) {
+    //   alert('비밀번호는 최소 8자, 영문자, 숫자, 특수문자를 포함해야 합니다.');
+    //   return false;
+    // }
+
+    // 이메일 포맷 검사
+    const email = document.getElementById('email').value;
+    const emailPattern = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
+    if (!emailPattern.test(email)) {
+      alert('올바른 이메일 형식을 입력해주세요.');
+      return false;
+    }
+
+    // 생년월일 검사
+    // const birthdate = document.getElementById('birthdate').value;
+    // const birthYear = new Date(birthdate).getFullYear();
+    // const currentYear = new Date().getFullYear();
+    // if (currentYear - birthYear < 18) {
+    //   alert('만 18세 이상만 가입할 수 있습니다.');
+    //   return false;
+    // }
+
+    return true;
+  }
+
+  // 주소 검색 API를 호출하는 함수
+  function execDaumPostcode() {
+    new daum.Postcode({
+      oncomplete: function(data) {
+        // 선택한 주소 정보를 가져와서 해당 인풋에 삽입
+        document.getElementById('address').value = data.address;
+      }
+    }).open();
+  }
+
+  // 카카오 주소 검색 API 스크립트 로드
+  var script = document.createElement('script');
+  script.src = 'https://t1.daumcdn.net/mapjsapi/bundle/postcode/prod/postcode.v2.js';
+  document.body.appendChild(script);
+
+  let photoCount = 1;
+
+  function previewImage(event, index) {
+    const reader = new FileReader();
+    reader.onload = function() {
+      const preview = document.getElementById('preview' + index);
+      preview.src = reader.result;
+      preview.style.display = 'block';
+    };
+    reader.readAsDataURL(event.target.files[0]);
+
+    if (photoCount < 6) {
+      addNewPhotoBox();
+    }
+  }
+
+  function addNewPhotoBox() {
+    photoCount++;
+    if (photoCount > 6) return;
+
+    const photoSection = document.getElementById('photo-section');
+    const newPhotoBox = document.createElement('div');
+    newPhotoBox.classList.add('photo-box');
+    newPhotoBox.setAttribute('onclick', `document.getElementById('photoInput${photoCount}').click()`);
+
+    const newImg = document.createElement('img');
+    newImg.setAttribute('id', `preview${photoCount}`);
+    newImg.setAttribute('src', '#');
+    newImg.setAttribute('alt', '프로필 사진');
+    newImg.style.display = 'none';
+
+    const addButton = document.createElement('div');
+    addButton.classList.add('add-photo-button');
+    addButton.textContent = '+';
+
+    const newInput = document.createElement('input');
+    newInput.setAttribute('type', 'file');
+    newInput.setAttribute('id', `photoInput${photoCount}`);
+    newInput.setAttribute('name', 'profileImages[]');  // 배열 형식으로 서버에 전달되도록 설정
+    newInput.classList.add('hidden-input');
+    newInput.setAttribute('accept', 'image/*');
+    newInput.setAttribute('onchange', `previewImage(event, ${photoCount})`);
+
+    newPhotoBox.appendChild(newImg);
+    newPhotoBox.appendChild(addButton);
+    newPhotoBox.appendChild(newInput);
+    photoSection.appendChild(newPhotoBox);
+  }
+
+  let selectedInterests = [];
+
+  function prepareInterestsForSubmit() {
+    const interestsInput = document.getElementById('interestsInput');
+    interestsInput.value = selectedInterests.join(',');
+    return validateForm();
+  }
+
+  function toggleInterestSelection(button) {
+    const interest = button.getAttribute("data-interest");
+
+    if (selectedInterests.includes(interest)) {
+      selectedInterests = selectedInterests.filter(i => i !== interest);
+      button.classList.remove("selected");
+    } else if (selectedInterests.length < 8) {
+      selectedInterests.push(interest);
+      button.classList.add("selected");
+    } else {
+      alert("최대 8개까지만 선택할 수 있습니다.");
+    }
+  }
+
+  function saveSelectedInterests() {
+    updateSelectedInterests();
+    closeModal();
+  }
+
+  function updateSelectedInterests() {
+    const selectedContainer = document.getElementById("selectedInterests");
+    selectedContainer.innerHTML = "";
+    selectedInterests.forEach(interest => {
+      const button = document.createElement("button");
+      button.className = "selected-interest-button";
+      button.textContent = interest;
+      selectedContainer.appendChild(button);
+    });
+  }
+
+  function resetInterests() {
+    selectedInterests = [];
+    updateSelectedInterests();
+    document.querySelectorAll(".interest-button").forEach(button => {
+      button.classList.remove("selected");
+    });
+  }
+
+  function openModal() {
+    document.getElementById("interestModal").style.display = "block";
+  }
+
+  function closeModal() {
+    document.getElementById("interestModal").style.display = "none";
+  }
+
+</script>
+
+</body>
+</html>

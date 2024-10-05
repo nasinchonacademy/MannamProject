@@ -1,0 +1,92 @@
+<!-- 메인 컨텐츠 영역 -->
+<div class="loginContent">
+  <div class="background-image">
+    <button class="login-button" onclick="showLoginForm()">로그인/회원가입</button>
+  </div>
+</div>
+
+<!-- 로그인 폼 -->
+<div id="loginForm" class="login-form hidden">
+  <h2>로그인</h2>
+  <form action="/login" method="POST">
+    <input type="hidden" th:name="${_csrf?.parameterName}" th:value="${_csrf?.token}" />
+    <div class="form-group">
+      <label for="username">아이디</label>
+      <input type="text" class="form-control" id="username" name="username" placeholder="아이디">
+    </div>
+    <div class="form-group">
+      <label for="password">비밀번호</label>
+      <input type="password" class="form-control" id="password" name="password" placeholder="비밀번호">
+    </div>
+    <div class="form-group-find">
+      <div class="find-id-password"><a href="#" onclick="showFindUsernamePopup()">아이디 찾기</a></div>
+      <p style="margin: -5px">/</p>
+      <div class="find-id-password"><a href="#" onclick="showRecoveryPopup()">비밀번호 찾기</a></div>
+    </div>
+    <div class="form_button">
+      <button type="submit" class="form-login-button">로그인</button>
+      <a href="/signup" class="form-register-button">회원가입</a>
+    </div>
+  </form>
+</div>
+
+<!-- 팝업 배경 -->
+<div id="popupBackground" class="popup-background hidden"></div>
+
+<!-- 비밀번호 찾기 팝업 -->
+<div id="popupRecoveryForm" class="popup-form hidden">
+  <div class="popup-header">
+    <h2>비밀번호 찾기</h2>
+    <button class="close-popup" onclick="closeRecoveryPopup()">X</button>
+  </div>
+  <form id="recoveryForm">
+    <div class="form-group">
+      <label for="email">이메일을 입력하세요:</label>
+      <input type="email" class="form-control" id="email" name="email" placeholder="이메일" required>
+    </div>
+    <button type="button" class="send-code-button" onclick="sendRecoveryCode()">인증 코드 전송</button>
+
+    <div id="codeVerification" class="hidden">
+      <div class="form-group">
+        <label for="code">인증 코드를 입력하세요:</label>
+        <input type="text" class="form-control" id="code" name="code" placeholder="인증 코드" required>
+      </div>
+      <button type="button" class="verify-code-button" onclick="verifyRecoveryCode()">인증 코드 확인</button>
+    </div>
+
+    <div id="recoveryOptions" class="hidden">
+      <h3>비밀번호 재설정</h3>
+      <div id="usernameDisplay"></div>
+      <div id="passwordReset" class="hidden" style="margin-bottom: 15px">
+        <label for="newPassword"  style="margin-bottom: 10px">새 비밀번호:</label>
+        <input type="password" class="form-control" id="newPassword" name="newPassword" placeholder="새 비밀번호">
+        <button type="button" class="reset-password-button" onclick="resetPassword()">비밀번호 재설정</button>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- 아이디 찾기 폼 -->
+<div id="popupFindUsername" class="popup-form hidden">
+  <div class="popup-header">
+    <h2>아이디 찾기</h2>
+    <button class="close-popup" onclick="closeFindUsernamePopup()">X</button>
+  </div>
+  <form id="findUsernameForm">
+    <div class="form-group">
+      <label for="name">이름</label>
+      <input type="text" class="form-control" id="name" name="name" placeholder="이름" required>
+    </div>
+    <div class="form-group">
+      <label for="email">이메일</label>
+      <input type="email" class="form-control" id="useremail" name="email" placeholder="이메일" required>
+    </div>
+    <button type="button" class="send-find-username-button" onclick="findUsername()">아이디 찾기</button>
+
+    <!-- 아이디 찾기 결과 -->
+    <div id="usernameResult" class="hidden">
+      <h3>아이디: <span id="useridDisplay"></span></h3>
+      <div style="margin: 0 auto; margin-top: 20px"><a href="#" class="find-password-button" onclick="showRecoveryPopup(),closeFindUsernamePopup()">비밀번호 찾기</a></div>
+    </div>
+  </form>
+</div>

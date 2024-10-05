@@ -1,0 +1,85 @@
+<!-- fragments/header.html -->
+<header th:fragment="header">
+    <div class="header">
+        <div class="logo-image"><img src="/image/logo.png"></div>
+        <div class="header-index">
+            <a>마이페이지</a>
+            <a>프로필 수정</a>
+            <a>로그아웃</a>
+            <a>맞춤형 상대 찾기</a>
+            <a>프로필로 상대 찾기</a>
+            <a>모임 찾기</a>
+        </div>
+    </div>
+</header>
+
+<!-- fragments/nav.html -->
+<nav th:fragment="navMenu">
+    <ul class="menu">
+        <div class="menuWrap">
+            <li><a sec:authorize="isAnonymous()" th:href="@{/login}">로그인</a></li>
+            <li><a sec:authorize="isAnonymous()" th:href="@{/signup1}">회원가입</a></li>
+            <li><a sec:authorize="isAuthenticated()" th:href="@{/mypage}">
+                <img th:src="${user != null and user.profilePhoto != null ? '/profiles/' + user.profilePhoto : '/image/tool/profilelogo.PNG'}" alt="Profile Photo" class="profile-image-bar"></a>
+            </li>
+            <li><a sec:authorize="isAuthenticated()" th:href="@{/mypage}">
+                <h3 th:text="${user.nickname}" class="profile-nickname-bar"></h3>
+                <h5 th:if="${user != null and user.isVet}" class="vet-title" style="margin-bottom: 20px; margin-top: -22px; font-weight: bold">수의사님</h5></a>
+            </li>
+            <li><a sec:authorize="isAuthenticated()" th:href="@{/mypage}">마이 페이지</a></li>
+            <li><a sec:authorize="isAuthenticated()" th:href="@{/mypageedit(isRadio2Selected=true)}">프로필 수정</a></li>
+            <li><a sec:authorize="isAuthenticated()" th:href="@{/logout}">로그아웃</a></li>
+            <li><a th:href="@{/mungstory}">멍스토리</a></li>
+            <li>
+                <a sec:authorize="isAnonymous()" th:href="@{/soshospitallist}" th:onclick="return checkLogin();">멍SOS</a>
+                <a sec:authorize="isAuthenticated()" th:href="@{/soshospitallist}">멍SOS</a>
+                <ul class="submenu">
+                    <li><a sec:authorize="isAnonymous()" th:href="@{/soshospitallist}" th:onclick="return checkLogin();">지역별 동물병원</a></li>
+                    <li><a sec:authorize="isAuthenticated()" th:href="@{/soshospitallist}">지역별 동물병원</a></li>
+                    <li><a sec:authorize="isAnonymous()" th:href="@{/soshospitallist(isRadio2Selected=true)}" th:onclick="return checkLogin();">SOS 상담</a></li>
+                    <li><a sec:authorize="isAuthenticated()" th:href=" @{/soshospitallist(current='radio2', page=1)}">SOS 상담</a></li>
+                </ul>
+            </li>
+
+            <li>
+                <a sec:authorize="isAnonymous()" th:href="@{/game_list}" th:onclick="return checkLogin();">리워드</a>
+                <a sec:authorize="isAuthenticated()" href="#">리워드</a>
+                <ul class="submenu">
+                    <li><a sec:authorize="isAnonymous()" th:href="@{/game_list}" th:onclick="return checkLogin();">젤리 퀘스트</a></li>
+                    <li><a sec:authorize="isAuthenticated()" th:href="@{/game_list}">젤리 퀘스트</a></li>
+                    <li><a sec:authorize="isAnonymous()" th:href="@{/productMain}" th:onclick="return checkLogin();">멍뭉쇼핑</a></li>
+                    <li><a sec:authorize="isAuthenticated()" th:href="@{/productMain}">멍뭉쇼핑</a></li>
+                </ul>
+            </li>
+            <li sec:authorize="hasRole('ADMIN')">
+                <a href="/admin/index" target="_blank">관리자 페이지</a>
+            </li>
+        </div>
+    </ul>
+</nav>
+
+<!-- fragments/footer.html -->
+
+<footer th:fragment="footer">
+    <div class="shadow1">
+        <div class="footerWrap">
+            <div id="lia">
+                <ul>
+                    <li><a href="about.html">회사소개</a></li>
+                    <li><a href="terms.html">이용약관</a></li>
+                    <li><a href="privacy.html">개인정보처리방침</a></li>
+                </ul>
+            </div>
+            <div class="span">
+                <span id="footer-span">Footer content goes here</span>
+            </div>
+            <div class="social-links">
+                <ul class="nav justify-content-end list-unstyled d-flex">
+                    <li><a class="text-body-secondary" href="#"><i class="bi bi-twitter"></i></a></li>
+                    <li><a class="text-body-secondary" href="https://www.instagram.com"><i class="bi bi-instagram"></i></a></li>
+                    <li><a class="text-body-secondary" href="https://www.facebook.com"><i class="bi bi-facebook"></i></a></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+</footer>
