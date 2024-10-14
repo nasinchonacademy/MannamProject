@@ -1,6 +1,7 @@
 package org.zerock.wantuproject.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.Payload;
@@ -20,6 +21,7 @@ import java.time.LocalDateTime;
 
 @Controller
 @RequiredArgsConstructor
+@Slf4j
 public class ChatWebSocketController {
 
     private final ChatMessageService chatMessageService;
@@ -31,11 +33,13 @@ public class ChatWebSocketController {
     public ChatMessageDTO sendMessage(@DestinationVariable Long roomId, @Payload ChatMessageDTO messageDTO) {
         System.out.println("Received message: " + messageDTO);
 
+
         // 현재 인증된 사용자 정보를 가져옴
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !authentication.isAuthenticated()) {
             throw new RuntimeException("User is not authenticated.");
         }
+
 
         String currentUsername = authentication.getName(); // 인증된 사용자 이름 가져오기
 
@@ -63,10 +67,14 @@ public class ChatWebSocketController {
 
         ChatMessageDTO chatMessageDTO = chatMessageService.entityToDto(chatMessage);
 
+
+
         // roomId 및 기타 로직 처리
         messageDTO.setRoomId(roomId);
 
-        chatMessageService.saveMessage(chatMessageDTO);
+        log.info("메시지 수신: " + chatMessageDTO.toString());
+
+        chatMessageService.saveMessageAsync(chatMessageDTO);
 
         return chatMessageDTO; // 변환된 메시지를 반환
     }

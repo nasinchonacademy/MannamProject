@@ -1,0 +1,82 @@
+<form action="/mypage/edit" method="POST" enctype="multipart/form-data" onsubmit="return prepareInterestsForSubmit()">
+    <div class="form-group">
+        <label for="introduce">자기소개</label>
+        <input type="text" id="introduce" name="introduce" th:value="${user.introduce}" required>
+    </div>
+
+    <div class="form-group">
+        <label for="address">주소</label>
+        <input type="text" id="address" name="address" th:value="${user.address}" required readonly>
+        <button type="button" class="address-button" onclick="execDaumPostcode()">주소 검색</button>
+    </div>
+
+
+    <div id="photo-section" class="profile-photo-section">
+        <div th:each="image, iterStat : ${user.profileImages}" class="photo-box" data-index="[[${iterStat.index}]]">
+            <img id="preview[[${iterStat.index}]]" th:src="@{/files(fileName=${image.imageUrl})}" alt="프로필 사진">
+            <input type="file" id="photoInput[[${iterStat.index}]]" name="profileImages" class="hidden-input" accept="image/*" onchange="previewImage(event, [[${iterStat.index}]])">
+            <input type="hidden" name="existingProfileImages" th:value="${image.imageUrl}">
+            <button type="button" class="add-photo-button" data-index="[[${iterStat.index}]]" onclick="addPhoto([[${iterStat.index}]])">+</button>
+            <button type="button" class="delete-photo-button" data-index="[[${iterStat.index}]]" onclick="deletePhotoBox([[${iterStat.index}]])">삭제</button>
+        </div>
+    </div>
+    <input type="hidden" id="deletedProfileImages" name="deletedProfileImages" value="">
+    <button type="button" id="addPhotoButton">+ 사진 추가</button>
+
+
+    <!-- 관심사 추가 및 재설정 버튼 섹션 -->
+        <div style="width: 100%; margin-bottom: 30px">
+            <label>관심사 수정</label>
+        </div>
+        <div class="interest-section">
+            <div id="interestButtonsContainer">
+                <button type="button" id="addInterestBtn" onclick="openModal()">+ 관심사 추가</button>
+            </div>
+            <button type="button" id="resetInterestBtn" onclick="resetInterests()">관심사 재설정</button>
+        </div>
+        <input type="hidden" id="interestsInput" name="interests" value="">
+        <div id="selectedInterests" class="selected-interests">
+            <div th:each="interest : ${user.interests}">
+                <button type="button" class="selected-interest-button" th:text="${interest.interestName}"></button>
+            </div>
+        </div>
+
+    <button type="submit" class="submit-btn">수정하기</button>
+</form>
+
+<!-- 관심사 모달 -->
+<div id="interestModal" class="modal">
+    <div class="modal-content">
+        <span class="close" onclick="closeModal()">&times;</span>
+        <div class="modal-header">관심사 선택 (최대 8개)</div>
+        <div class="modal-body">
+            <div class="interest-list">
+                <button class="interest-button" data-interest="운동" onclick="toggleInterestSelection(this)">운동</button>
+                <button class="interest-button" data-interest="음악" onclick="toggleInterestSelection(this)">음악</button>
+                <button class="interest-button" data-interest="독서" onclick="toggleInterestSelection(this)">독서</button>
+                <button class="interest-button" data-interest="여행" onclick="toggleInterestSelection(this)">여행</button>
+                <button class="interest-button" data-interest="영화" onclick="toggleInterestSelection(this)">영화</button>
+                <button class="interest-button" data-interest="사진" onclick="toggleInterestSelection(this)">사진</button>
+                <button class="interest-button" data-interest="게임" onclick="toggleInterestSelection(this)">게임</button>
+                <button class="interest-button" data-interest="등산" onclick="toggleInterestSelection(this)">등산</button>
+                <button class="interest-button" data-interest="명상" onclick="toggleInterestSelection(this)">명상</button>
+                <button class="interest-button" data-interest="패션" onclick="toggleInterestSelection(this)">패션</button>
+                <button class="interest-button" data-interest="캠핑" onclick="toggleInterestSelection(this)">캠핑</button>
+                <button class="interest-button" data-interest="쇼핑" onclick="toggleInterestSelection(this)">쇼핑</button>
+                <button class="interest-button" data-interest="디자인" onclick="toggleInterestSelection(this)">디자인</button>
+                <button class="interest-button" data-interest="DIY" onclick="toggleInterestSelection(this)">DIY</button>
+                <button class="interest-button" data-interest="과학" onclick="toggleInterestSelection(this)">과학</button>
+                <button class="interest-button" data-interest="기술" onclick="toggleInterestSelection(this)">기술</button>
+                <button class="interest-button" data-interest="요가" onclick="toggleInterestSelection(this)">요가</button>
+                <button class="interest-button" data-interest="춤" onclick="toggleInterestSelection(this)">춤</button>
+                <button class="interest-button" data-interest="자동차" onclick="toggleInterestSelection(this)">자동차</button>
+                <button class="interest-button" data-interest="재테크" onclick="toggleInterestSelection(this)">재테크</button>
+            </div>
+            <input type="text" id="customInterest" placeholder="직접 입력" class="custom-input" />
+            <button class="interest-button" onclick="selectCustomInterest()">직접 입력</button>
+        </div>
+        <div class="modal-footer">
+            <button class="modal-save-button" onclick="saveSelectedInterests()">선택 완료</button>
+        </div>
+    </div>
+</div>

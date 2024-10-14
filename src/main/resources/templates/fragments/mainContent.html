@@ -1,6 +1,5 @@
 
 
-
   <!-- 첫 번째 섹션 -->
   <div class="section section1">
     <div class="overlay"></div>
@@ -15,7 +14,7 @@
         </div>
         <div class="button-group2">
           <p>내가 원하는 <span>이성을 찾고 싶다.</span></p>
-          <button>프로필로 상대 찾기</button>
+          <button onclick="goToProfileSearch()">프로필로 상대 찾기</button>
         </div>
       </div>
     </div>
@@ -28,11 +27,28 @@
       <h1><span>우리</span><br>오늘은 뭐하면서 놀까?</h1>
       <div class="button-group">
         <p>오늘은 어떤 사람들을 만날볼까?</p>
-        <button>모임 찾아보기</button>
+        <button onclick="goTomeetingList()">모임 찾아보기</button>
       </div>
       <div class="button-group2">
         <p><span>오늘은 어떤 걸 같이 해볼까?</span></p>
-        <button>직접 모임 만들기</button>
+        <button onclick=" makeMeetingRoom()">직접 모임 만들기</button>
       </div>
     </div>
   </div>
+
+  <script>
+    function goToProfileSearch() {
+      // 원하는 경로로 페이지 이동
+      window.location.href = '/chat/findMultipleUsers'; // 여기에 이동할 URL을 입력하세요
+    }
+
+    function goTomeetingList() {
+      // 원하는 경로로 페이지 이동
+      window.location.href = '/meetingRoomsMap'; // 여기에 이동할 URL을 입력하세요
+    }
+
+    function makeMeetingRoom() {
+      // 원하는 경로로 페이지 이동
+      window.location.href = '/createMeetingRoom'; // 여기에 이동할 URL을 입력하세요
+    }
+  </script>

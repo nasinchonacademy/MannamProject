@@ -1,10 +1,7 @@
 package org.zerock.wantuproject.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.List;
 
@@ -31,6 +28,7 @@ public class ChatRoom {
 
     // 채팅방 내 메시지들
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @ToString.Exclude // 순환 참조 방지
     private List<ChatMessage> chatMessages;
 
 

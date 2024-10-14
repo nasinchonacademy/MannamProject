@@ -1,10 +1,12 @@
 package org.zerock.wantuproject.repository;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.zerock.wantuproject.entity.User;
-
 import java.util.List;
 import java.util.Optional;
 
@@ -32,4 +34,21 @@ public interface UserRepository extends JpaRepository<User, Long> {
             "ORDER BY COUNT(i) DESC")
     List<User> findUsersByInterestsAndDifferentGender(List<String> interestNames, Long userId, String gender);
 
+    // 성별이 다른 유저를 랜덤으로 가져오는 쿼리 (페이징 지원)
+    @Query("SELECT u FROM User u WHERE u.gender != :gender AND u.id != :currentUserId ORDER BY FUNCTION('RAND')")
+    List<User> findRandomUsersByGender(@Param("currentUserId") Long currentUserId, @Param("gender") String gender, Pageable pageable);
+
+
+    @Query("SELECT u FROM User u WHERE u.gender <> :gender AND u.id <> :userId AND u.id NOT IN :selectedUserIds ORDER BY function('RAND')")
+    List<User> findTop3ByGenderNotAndIdNotAndIdNotInOrderByRandom(
+            @Param("gender") String gender,
+            @Param("userId") Long userId,
+            @Param("selectedUserIds") List<Long> selectedUserIds);
+
+
+
+    @Query("SELECT u FROM User u WHERE u.gender != :gender AND u.id != :userId")
+    List<User> findUsersByGenderNotAndIdNot(@Param("gender") String gender, @Param("userId") Long userId);
+
 }
+

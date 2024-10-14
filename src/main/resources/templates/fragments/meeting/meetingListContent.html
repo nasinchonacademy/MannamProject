@@ -1,0 +1,52 @@
+<div class="container">
+    <div id="flashMessage" th:text="${message}" style="display: none;"></div>
+    <h2>단체 채팅방 찾기</h2>
+    <div id="map"></div>
+
+<!--    &lt;!&ndash; 재검색 버튼 &ndash;&gt;-->
+<!--    <div id="reSearchButton" style="display: none;">-->
+<!--        <button onclick="reSearchMeetingRooms()">현재 위치에서 재검색</button>-->
+<!--    </div>-->
+
+
+    <div class="search-group">
+        <div class="search-bar">
+            <input type="text" id="searchQuery" placeholder="검색어 입력">
+            <button onclick="searchMeetingRooms()">검색</button>
+        </div>
+        <div class="tag-filters">
+            <label><input type="radio" name="searchCategory" class="tag" value="title" checked> 제목으로 검색</label>
+            <label><input type="radio" name="searchCategory" class="tag" value="interests"> 관심사로 검색</label>
+        </div>
+    </div>
+
+    <div id="chatRoomList">
+        <!-- 검색 결과가 여기에 표시됩니다 -->
+    </div>
+
+    <div id="pagination">
+        <!-- 페이징 버튼이 여기에 표시됩니다 -->
+    </div>
+
+    <div>
+        <button onclick="createMeetingRoom()" class="createMeetingRoom">모임 만들기</button>
+    </div>
+</div>
+
+
+<script>
+    function createMeetingRoom() {
+        // 원하는 경로로 페이지 이동
+        window.location.href = '/createMeetingRoom'; // 여기에 이동할 URL을 입력하세요
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+        // 플래시 메시지가 있으면 alert로 보여주기
+        const flashMessageElement = document.getElementById('flashMessage');
+        const message = flashMessageElement.textContent.trim();  // 메시지를 가져옴
+        if (message) {
+            alert(message);  // 메시지를 alert로 표시
+        }
+    });
+</script>
+

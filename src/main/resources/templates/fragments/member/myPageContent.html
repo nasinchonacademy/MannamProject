@@ -1,0 +1,81 @@
+<main class="container mt-4">
+    <div class="row mb-4">
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">받은 좋아요</h5>
+                    <p class="card-text" th:text="${likesReceived.size()}"></p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="card">
+                <div class="card-body text-center">
+                    <h5 class="card-title">보낸 좋아요</h5>
+                    <p class="card-text" th:text="${likesGiven.size()}"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h4>프로필 정보</h4>
+            <div class="card">
+                <div class="card-body">
+                    <h5 class="card-title" th:text="${user.name}"></h5>
+                    <p class="card-text">닉네임: <span th:text="${user.nickname}"></span></p>
+                    <p class="card-text">생년월일: <span th:text="${user.birthDate}"></span></p>
+                    <p class="card-text">성별: <span th:text="${user.gender}"></span></p>
+                    <p class="card-text">자기소개: <span th:text="${user.introduce}"></span></p>
+                    <p class="card-text">주소: <span th:text="${user.address}"></span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h4>프로필 사진</h4>
+            <div class="profile-photos">
+                <div th:each="image, iterStat : ${user.profileImages}" class="profile-photo-box">
+                    <img th:src="@{/files(fileName=${image.imageUrl})}" class="img-thumbnail" alt="Profile Image">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h4>관심사</h4>
+            <div class="interest-list">
+                <div th:each="interest : ${user.interests}" class="btn btn-outline-secondary me-2 mb-2" style="border-radius: 20px;">
+                    <span th:text="${interest.interestName}"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h4>채팅방 목록</h4>
+            <ul class="list-group">
+                <li class="list-group-item" th:each="room : ${chatRooms}">
+                    <a th:if="${room.roomid != null}" th:href="@{/chat/{id}(id=${room.roomid})}" th:text="${room.roomname}"></a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <h4>만남 채팅방 목록</h4>
+            <ul class="list-group">
+                <li class="list-group-item" th:each="room : ${meetingRooms}">
+                    <a th:if="${room != null}" th:href="@{/meetingRoomDetail/{id}(id=${room.id})}" th:text="${room.title}"></a>
+                </li>
+                <li th:if="${meetingRooms.size() == 0}" class="list-group-item">참여 중인 만남 방이 없습니다.</li>
+            </ul>
+        </div>
+    </div>
+</main>

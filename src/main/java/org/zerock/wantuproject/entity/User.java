@@ -1,6 +1,7 @@
 package org.zerock.wantuproject.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -11,8 +12,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.time.LocalDate;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
 
 @Entity
 @Data
@@ -64,6 +64,21 @@ public class User implements UserDetails {
 
     @OneToMany(mappedBy = "user" , cascade = CascadeType.ALL , orphanRemoval = true)
     private List<Interest> interests;
+
+    // 내가 좋아요를 누른 사용자 목록 (양방향 관계 설정)
+    @OneToMany(mappedBy = "liker", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<LikedUser> likedUsers = new ArrayList<>();
+
+    // 나를 좋아요한 사용자 목록
+    @OneToMany(mappedBy = "likedUser", cascade = CascadeType.ALL, orphanRemoval = true)
+    @JsonManagedReference
+    private List<LikedUser> likedByUsers = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<MeetingRoomParticipant> meetingRooms;
+
+
 
     @Builder
     public User(Long id,String name, String email,String password, String nickname,LocalDate birthDate, String gender, String introduce, String roleUser,String uid, String address) {
@@ -139,5 +154,18 @@ public class User implements UserDetails {
                 ", role='" + role + '\'' +
                 '}';
     }
+
+    public String getProfileImageUrl() {
+        if (profileImages != null && !profileImages.isEmpty()) {
+            return profileImages.get(0).getImageUrl();  // 첫 번째 이미지를 기본 이미지로 사용
+        }
+        return "/images/default-profile.png";  // 기본 이미지 경로
+    }
+
+    // 좋아요 받은 수 반환
+    public int getLikeCount() {
+        return this.likedByUsers.size();  // 나를 좋아요한 사용자 목록 크기를 반환
+    }
+
 
 }

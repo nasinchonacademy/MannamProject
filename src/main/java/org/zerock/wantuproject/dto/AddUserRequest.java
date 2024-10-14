@@ -22,5 +22,8 @@ public class AddUserRequest {
     private LocalDate birthDate;
     private List<String> interests;
     private List<MultipartFile> profileImages;
+    private List<String> profileImage;  // 이미지 경로를 리스트로 저장
     private String address;
+    private int likeCount;
+
 }

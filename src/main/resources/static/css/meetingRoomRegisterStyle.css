@@ -1,0 +1,122 @@
+.form-container {
+    width: 700px;
+    padding: 35px;
+    border: 1px solid  #b3aeae;;
+    border-radius: 30px;
+    margin: 0 auto;
+    margin-top: 40px;
+}
+
+.form-container input{
+    width: 500px;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #000000;
+    border-radius: 25px;
+    margin-left: 10px;
+}
+.form-container button {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+.form-container button {
+    background-color: #ffffff;
+    color: #020202;
+    border: 1px solid black;
+    cursor: pointer;
+    border-radius: 15px;
+    padding-right: 15px;
+    padding-left: 15px;
+    width: 200px;
+    margin: 0 auto;
+    margin-left: 30px;
+    margin-bottom: 30px;
+}
+.form-container button:hover {
+    background-color: #2aaff8;
+    color: white;
+}
+.form-container .interest-list {
+    margin: 10px 0;
+}
+.form-container .interest-list button {
+    width: 200px;
+    display: inline-block;
+    margin: 0 auto;
+    margin-left: 5px;
+    margin-top: 15px;
+}
+
+#meetingRoomTitle{
+
+}
+
+label{
+    margin-bottom: 10px;
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.form-group{
+    margin-top: 15px;
+    margin-bottom: 15px;
+}
+
+#image{
+
+}
+
+/* 미리보기 이미지 스타일 */
+.image-preview {
+    width: 200px;
+    height: 200px;
+    border: 1px solid #ddd;
+    background-color: #e0e0e0;
+    object-fit: cover;
+}
+
+/* 이미지 미리보기와 파일 입력 영역을 나란히 배치 */
+.image-upload-container {
+    display: flex;
+    align-items: center;
+}
+
+.image-upload-container button {
+    margin-left: 10px;
+    padding: 5px 10px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    width: 200px; /* 기본 버튼 너비 */
+    max-width: 350px; /* 최대 너비 */
+    transition: width 0.3s ease; /* 부드러운 확장 효과 */
+}
+
+/* 채팅방 소개를 위한 textarea 스타일 */
+#description {
+    height: 150px;
+    resize: none; /* 크기 조절 비활성화 */
+    padding: 10px;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    width: 100%
+}
+
+.submit_button{
+    display: flex;
+    justify-content: center;
+}
+
+.submit_button button{
+    margin: 0 auto;
+}
+
+#address{
+    border: none;
+    font-weight: bold;
+}
+
+

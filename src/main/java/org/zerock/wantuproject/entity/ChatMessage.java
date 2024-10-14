@@ -3,10 +3,7 @@ package org.zerock.wantuproject.entity;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.time.LocalDateTime;
 
@@ -31,6 +28,7 @@ public class ChatMessage {
     // roomId를 ChatRoom과 ManyToOne 관계로 설정
     @ManyToOne
     @JoinColumn(name = "room_id")
+    @ToString.Exclude // 순환 참조 방지
     private ChatRoom chatRoom;
 
     private LocalDateTime timestamp; // 메시지 보낸 시간

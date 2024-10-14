@@ -3,14 +3,22 @@
     <div class="header">
         <div class="logo-image"><img src="/image/logo.png"></div>
         <div class="header-index">
-            <a>마이페이지</a>
-            <a>프로필 수정</a>
-            <a>로그아웃</a>
-            <a>맞춤형 상대 찾기</a>
-            <a>프로필로 상대 찾기</a>
-            <a>모임 찾기</a>
+            <a href="/mypage">마이페이지</a> <!-- 마이페이지 링크 -->
+            <a href="/mypage/edit">프로필 수정</a> <!-- 프로필 수정 링크 -->
+            <a href="/logout">로그아웃</a> <!-- 로그아웃 링크 -->
+            <a href="#" onclick="submitMatchForm()">맞춤형 상대 찾기</a>
+            <form id="matchForm" action="/chat/match" method="POST" style="display: none;">
+                <input type="hidden" name="userId" value="${user.uid}"> <!-- 현재 사용자 UID -->
+            </form> <!-- 맞춤형 상대 찾기 링크 -->
+            <a href="/chat/findMultipleUsers">프로필로 상대 찾기</a> <!-- 프로필로 상대 찾기 링크 -->
+            <a href="/meetingRoomsMap">모임 찾기</a> <!-- 모임 찾기 링크 -->
         </div>
     </div>
+    <script>
+        function submitMatchForm() {
+            document.getElementById('matchForm').submit();
+        }
+    </script>
 </header>
 
 <!-- fragments/nav.html -->
@@ -83,3 +91,5 @@
         </div>
     </div>
 </footer>
+
+

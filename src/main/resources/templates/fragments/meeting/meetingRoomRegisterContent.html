@@ -1,0 +1,46 @@
+
+
+<div class="form-container">
+    <form id="createMeetingForm" enctype="multipart/form-data" method="post" action="/createMeetingRoom">
+        <div id="meetingRoomTitle" class="form-group">
+            <label for="title">모임 명</label>
+            <input type="text" id="title" name="title" placeholder="모임 이름을 입력하세요" required>
+        </div>
+
+        <div class="form-group">
+            <label for="image">모임 이미지 설정</label>
+            <div class="image-upload-container">
+                <img id="imagePreview" class="image-preview" src="#" alt="이미지 미리보기" style="display: none;">
+                <button type="button" id="imageUploadButton" onclick="document.getElementById('image').click();">+ 모임 이미지 설정</button>
+                <input type="file" id="image" name="image" style="display: none;" accept="image/*" onchange="previewImage()">
+            </div>
+        </div>
+
+
+        <div class="form-group">
+            <label>관심사</label>
+            <div class="interest-list" id="interestList">
+                <!-- 여기에 관심사 버튼들이 추가됨 -->
+                <button type="button" id="addInterestBtn">+ 관심사 추가</button>
+            </div>
+            <input type="hidden" id="interests" name="interests">
+        </div>
+
+        <div class="form-group">
+            <label for="address">위치 설정</label>
+            <button type="button" id="setLocationBtn">위치 입력하기</button>
+            <input type="text" id="address" name="address" readonly placeholder="위치를 선택하세요" required>
+        </div>
+
+        <div class="form-group">
+            <label for="description">채팅방 소개</label>
+            <textarea id="description" name="description" placeholder="채팅방 소개를 입력하세요" rows="4" required></textarea>
+        </div>
+
+        <input type="hidden" id="latitude" name="latitude">
+        <input type="hidden" id="longitude" name="longitude">
+        <div class="submit_button">
+            <button type="submit">모임 생성하기</button>
+        </div>
+    </form>
+</div>

@@ -1,6 +1,7 @@
 package org.zerock.wantuproject.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.zerock.wantuproject.dto.ChatMessageDTO;
 import org.zerock.wantuproject.entity.ChatMessage;
@@ -12,6 +13,7 @@ import org.zerock.wantuproject.repository.UserRepository;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service
@@ -82,6 +84,33 @@ public class ChatMessageService {
                 .roomId(entity.getChatRoom().getRoomid())  // ChatRoom의 ID를 DTO로 변환
                 .timestamp(entity.getTimestamp())
                 .build();
+    }
+
+    @Async
+    public CompletableFuture<ChatMessageDTO> saveMessageAsync(ChatMessageDTO messageDTO) {
+        System.out.println("roomId로 메시지 저장 중: " + messageDTO.getRoomId());
+
+        // roomId로 ChatRoom 객체를 가져옴
+        ChatRoom chatRoom = chatRoomRepository.findById(messageDTO.getRoomId())
+                .orElseThrow(() -> new RuntimeException("해당 roomId로 채팅방을 찾을 수 없습니다: " + messageDTO.getRoomId()));
+
+        // sender의 이름을 기반으로 User 객체를 조회
+        User sender = userRepository.findByUid(messageDTO.getSender())
+                .orElseThrow(() -> new RuntimeException("해당 사용자 이름을 가진 사용자를 찾을 수 없습니다: " + messageDTO.getSender()));
+
+        // ChatMessageDTO와 ChatRoom을 이용해 ChatMessage 객체 생성
+        ChatMessage message = ChatMessage.builder()
+                .sender(sender)  // 조회한 User 객체로 설정
+                .content(messageDTO.getContent())
+                .chatRoom(chatRoom)  // ChatRoom 엔티티 설정
+                .timestamp(messageDTO.getTimestamp() != null ? messageDTO.getTimestamp() : LocalDateTime.now())
+                .build();
+
+        // 메시지를 저장
+        ChatMessage savedMessage = chatMessageRepository.save(message);
+
+        // 저장된 메시지를 DTO로 변환 후 비동기 결과로 반환
+        return CompletableFuture.completedFuture(entityToDto(savedMessage));
     }
 
 

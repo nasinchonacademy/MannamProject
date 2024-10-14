@@ -1,0 +1,23 @@
+<div id="chat-container"
+     th:attr="data-room-id=${roomId}, data-username=${username}, data-usersname=${usersname}, data-userId=${userId}" >
+</div>
+
+<div class="chat-container">
+  <div id="chat-box" class="chat-box">
+    <!-- 채팅 메시지들이 여기에 동적으로 추가됩니다 -->
+  </div>
+  <div class="message-input">
+    <textarea id="messageInput" placeholder="메시지를 입력하세요..."></textarea>
+    <button onclick="sendMessage()">보내기</button>
+  </div>
+</div>
+
+
+<!-- 모달 -->
+<div id="userModal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2 id="modalTitle">상대 정보</h2>
+    <p id="modalBody">여기에 상대방의 정보를 표시합니다.</p>
+  </div>
+</div>

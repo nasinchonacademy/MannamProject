@@ -34,6 +34,7 @@ public class ChatController {
     @GetMapping("/chat/messages/{roomId}")
     public ResponseEntity<List<ChatMessageDTO>> getChatMessages(@PathVariable Long roomId) {
         List<ChatMessageDTO> messages = chatMessageService.getMessagesByRoomId(roomId);
+        System.out.println("조회된 메시지: " + messages);
         return ResponseEntity.ok(messages);
     }
 

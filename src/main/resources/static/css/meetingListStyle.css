@@ -1,0 +1,267 @@
+#map {
+    margin: 0 auto;
+    width: 100%;
+    height: 700px;
+}
+#chatRoomList {
+    margin-top: 20px;
+}
+.chat-room {
+    padding: 10px;
+    margin: 10px 0;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+}
+
+h2{
+    margin-bottom: 40px;
+}
+
+.createMeetingRoom{
+    margin-top: 30px;
+    background-color: white;
+    width: 160px;
+    height: 40px;
+    border-radius: 20px;
+    float: right;
+
+}
+
+
+.meeting-room-container {
+    width: 60%;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+/* 검색 바 */
+.search-bar {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
+}
+
+.search-bar input {
+    width: 80%;
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #ccc;
+}
+
+.search-bar button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    height: 54px;
+    margin-top: 20px;
+    margin-left: 10px;
+}
+
+.tag-filters {
+    display: flex;
+    gap: 10px;
+    justify-content: flex-end;
+}
+
+.tag {
+    background-color: #f0f0f0;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-top: 6px;
+}
+
+.tag:hover, .tag.active {
+    background-color: #007bff;
+    color: white;
+}
+
+#chatRoomList {
+    margin-top: 20px;
+    border: 1px solid #bfbfbf;
+    border-radius: 35px;
+}
+
+.meeting-room {
+    display: flex;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 10px;
+    justify-content: space-between;
+    align-items: flex-end;
+}
+
+.meeting-room:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* 채팅방 이미지 */
+.room-image {
+    width: 80px;
+    height: 80px;
+    border-radius: 8px;
+    object-fit: cover;
+    margin-right: 20px;
+}
+
+/* 채팅방 정보 */
+.room-info {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+/* 방 제목 */
+.room-title {
+    margin: 0;
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.room-title a {
+    color: #333;
+    text-decoration: none;
+}
+
+.room-title a:hover {
+    text-decoration: underline;
+    color: #007bff; /* 링크 hover 시 색상 */
+}
+
+/* 관심사, 참여인원, 좋아요 수 */
+.room-interests, .room-participants, .room-likes {
+    margin: 5px 0;
+    font-size: 14px;
+    color: #666;
+}
+
+.room-participants, .room-likes {
+    font-size: 13px;
+    font-weight: bold;
+}
+
+/* 재검색 버튼 */
+#reSearchButton {
+    display: none;
+    margin: 20px auto;
+    text-align: center;
+}
+
+#reSearchButton button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    border: none;
+    color: #fff;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+#reSearchButton button:hover {
+    background-color: #0056b3;
+}
+
+/* 페이지네이션 스타일 */
+.pagination {
+    display: flex;
+    justify-content: center;
+    margin: 20px 0;
+}
+
+.pagination a {
+    margin: 0 5px;
+    padding: 8px 12px;
+    text-decoration: none;
+    color: #007bff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.pagination a:hover {
+    background-color: #007bff;
+    color: white;
+}
+
+.pagination a.current-page {
+    background-color: #007bff;
+    color: white;
+    pointer-events: none;
+}
+
+hr{
+    color: black;
+}
+
+#list-left{
+    display: flex;
+    align-items: flex-end;
+}
+
+#list-title-interests{
+    margin-right: 30px;
+}
+
+#list-title-interests p {
+    margin-top: 10px;
+    color: #a7a6a6;
+}
+
+input{
+    float: right;
+    margin-top: 20px;
+    width: 35%;
+    height: auto;
+}
+
+label {
+    display: inline-block;
+    width: 146px;
+}
+
+.search-group{
+    display: flex;
+    flex-direction: column;
+}
+
+/* 페이징 컨테이너 */
+.pagination-container {
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* 페이징 버튼 */
+.pagination-btn {
+    background-color: #f0f0f0;
+    border: 1px solid #ddd;
+    color: #333;
+    padding: 8px 12px;
+    margin: 0 3px;
+    cursor: pointer;
+    border-radius: 4px;
+    font-size: 14px;
+    transition: background-color 0.3s, color 0.3s;
+}
+
+.pagination-btn:hover {
+    background-color: #333;
+    color: #fff;
+}
+
+/* 현재 페이지(active) 스타일 */
+.pagination-btn.active {
+    background-color: #007bff;
+    color: #fff;
+    border-color: #007bff;
+    cursor: default;
+    pointer-events: none;
+}
+
+/* 이전, 다음 버튼 스타일 */
+.pagination-btn:first-child,
+.pagination-btn:last-child {
+    font-weight: bold;
+}

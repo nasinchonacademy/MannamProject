@@ -1,6 +1,6 @@
 let roomId = document.getElementById('chatRoom').getAttribute('data-room-id');
 let otherUserId = document.getElementById('chatRoom').getAttribute('data-other-user-id');
-loggedInUserId = document.getElementById('chatRoom').getAttribute('data-user-id');
+let loggedInUserId = document.getElementById('chatRoom').getAttribute('data-user-id');
 let stompClient = null;
 let lastSenderId = null;
 
@@ -20,11 +20,41 @@ function connect() {
 
         // 새로운 채팅방에 대한 구독 설정
         stompClient.subscribe(`/topic/chat/${roomId}`, function (messageOutput) {
-            console.log("받은 메시지:", messageOutput.body);
             const message = JSON.parse(messageOutput.body);
             showMessage(message);
         });
     });
+}
+
+function likeAndSaveChatRoom() {
+    fetch(`/chat/likeAndSave/${roomId}`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+            likerUid: loggedInUserId,   // 현재 로그인된 사용자의 uid
+            likedUserId: otherUserId    // 상대방의 사용자 id
+        })
+    })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('좋아요 및 채팅방 저장에 실패했습니다.');
+            }
+            return response.json();
+        })
+        .then(data => {
+            if (data && data.roomid) {
+                // 새로운 채팅방 정보로 UI 및 WebSocket, 채팅 기록 업데이트
+                updateChatRoom(data.roomid, data.otherUser, data.profileImageUrls);
+            } else {
+                console.error("새로운 상대를 찾을 수 없습니다.");
+            }
+        })
+        .catch(error => {
+            alert(error.message);
+            console.error('Error liking and saving chat room:', error);
+        });
 }
 
 function findAnotherUser() {
@@ -104,49 +134,59 @@ function updateChatRoomInfo(otherUser, roomId, profileImageUrls) {
 
 function sendMessage() {
     const messageInput = document.getElementById('messageInput');
-    const messageText = messageInput.value.trim();
+    const messageContent = messageInput.value.trim();
 
-    console.log("메시지 전송, roomId:", roomId, "내용:", messageText);
+    if (messageContent === '') {
+        return; // 빈 메시지는 전송하지 않음
+    }
 
-    if (messageText && stompClient) {
-        stompClient.send("/app/chat/" + roomId + "/sendMessage", {}, JSON.stringify({
-            roomId: roomId,  // 서버에서 인증된 사용자 정보와 함께 메시지를 보냄
-            content: messageText ,    // 메시지 내용만 전송
-        }));
-        messageInput.value = ''; // 입력창 비우기
+    const message = {
+        content: messageContent,
+        roomId: roomId
+    };
+
+    // WebSocket을 통해 메시지를 전송
+    if (stompClient && stompClient.connected) {
+        stompClient.send(`/app/chat/${roomId}/sendMessage`, {}, JSON.stringify(message));
+        messageInput.value = ''; // 메시지 입력창 초기화
+    } else {
+        console.error("WebSocket 연결이 되어 있지 않습니다.");
     }
 }
 
-/// 수신된 메시지를 화면에 표시하는 함수
 function showMessage(message) {
-    console.log("Received message:", message);
     const chatMessages = document.getElementById('chatRoom');
 
-    // 새로운 메시지 요소를 생성
+    // 메시지 요소 생성
     const messageElement = document.createElement('div');
+    messageElement.classList.add('message');
 
-    // 내 메시지인지 확인하여 클래스 적용
     if (message.sender === loggedInUserId) {
-        messageElement.classList.add('message', 'user1'); // 내가 보낸 메시지 (오른쪽 정렬)
+        messageElement.classList.add('user1');
     } else {
-        messageElement.classList.add('message', 'user2'); // 상대방 메시지 (왼쪽 정렬)
+        messageElement.classList.add('user2');
     }
 
-    // 연속된 동일 발신자의 경우 이름 생략
+    const messageContent = document.createElement('p');
+    messageContent.textContent = message.content;
+
     if (message.sender !== lastSenderId) {
-        const senderName = message.senderName ? message.senderName : "알 수 없는 사용자";
-        messageElement.innerHTML = `<span>${senderName}</span><p>${message.content}</p>`;
-    } else {
-        messageElement.innerHTML = `<p>${message.content}</p>`;
+        const senderName = document.createElement('span');
+        senderName.textContent = message.senderName || "알 수 없는 사용자";
+        messageElement.appendChild(senderName);
     }
+    messageElement.appendChild(messageContent);
 
-    // 생성한 메시지 요소를 채팅창에 추가
-    chatMessages.appendChild(messageElement);
+    // DOM에 바로 추가하지 않고, Fragment에 추가하여 성능 개선
+    const fragment = document.createDocumentFragment();
+    fragment.appendChild(messageElement);
 
-    // 새로운 메시지가 추가될 때 스크롤을 최신 메시지로 이동
+    // 한 번에 DOM에 추가
+    chatMessages.appendChild(fragment);
+
+    // 스크롤 최신 메시지로 이동
     chatMessages.scrollTop = chatMessages.scrollHeight;
 
-    // 마지막 발신자 ID 업데이트
     lastSenderId = message.sender;
 }
 

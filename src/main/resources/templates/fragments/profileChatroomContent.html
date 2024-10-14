@@ -1,0 +1,59 @@
+<div class="container">
+    <h2>매칭된 이성 프로필</h2>
+    <input type="hidden" id="loggedInUserId" th:value="${loggedInUserId}">
+    <input type="hidden" id="loggedInUserName" th:value="${loggedInUserName}">
+    <input type="hidden" id="loggedInUserUid" th:value="${loggedInUserUid}">
+
+    <!-- 랜덤 유저 프로필 목록 -->
+    <div id="profile-list" class="profile-list">
+        <div th:each="user : ${randomUsers}" class="profile-card" th:attr="data-user-id=${user.id}">
+            <!-- 프로필 슬라이더 -->
+            <div class="profile-slider">
+                <button class="slide-btn prev-btn" onclick="prevImage(this)">&#10094;</button> <!-- 이전 화살표 -->
+
+                <!-- 프로필 이미지 슬라이드 -->
+                <div class="profile-images">
+                    <img th:each="image, iterStat : ${user.profileImage}"
+                         th:src="@{|/files?fileName=${image}|}"
+                         alt="상대방 프로필 사진"
+                         class="profile-pic"
+                         th:classappend="${iterStat.index == 0} ? 'active' : ''">
+                </div>
+
+                <button class="slide-btn next-btn" onclick="nextImage(this)">&#10095;</button> <!-- 다음 화살표 -->
+            </div>
+
+            <div class="profile-info">
+                <h3 th:text="${user.name}"></h3>
+                <!-- 도시명과 나이 계산 -->
+                <p th:attr="data-birth-date=${user.birthDate}"
+                   th:text="${#strings.arraySplit(user.address, ' ')[0]} + ' | 나이 계산 중...'">
+                </p>
+                <p class="likecount">좋아요 수: <span th:text="${user.likeCount}"></span></p> <!-- 좋아요 수 표시 -->
+                <button class="select-profile-btn" th:data-user-id="${user.id}" onclick="selectProfile(this)">선택</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 선택된 프로필과 채팅방 (채팅방은 기본적으로 숨김) -->
+    <div class="chatroomandbutton">
+        <div id="chat-room" class="chat-box" style="display:none;">
+            <h2>채팅방</h2>
+            <div id="chatMessages" class="chat-messages"></div>
+
+            <div class="chat-input">
+                <input type="text" id="messageInput" placeholder="메시지를 입력하세요">
+                <button id="sendBtn" onclick="sendMessage()">전송</button>
+            </div>
+
+            <!-- 하단 액션 버튼 -->
+            <div class="actions">
+
+                <button class="like-and-save"  onclick="likeAndSaveChatRoom()">좋아요 누르고 채팅방 저장하기</button>
+            </div>
+        </div>
+        <div class="find_another">
+            <button class="find-another" id="find-another" style="display: block;" onclick="findAnotherUser()">다른 상대 찾기</button>
+        </div>
+    </div>
+</div>
